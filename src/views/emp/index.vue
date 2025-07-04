@@ -2,7 +2,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { queryPage } from "@/api/emp";
-import { Minus, Plus } from "@element-plus/icons-vue";
+import { Minus, Plus, Edit, Delete } from "@element-plus/icons-vue";
 
 // 表格数据展示
 const empList = ref([]);
@@ -35,7 +35,7 @@ const search = async () => {
     currentPage.value,
     pageSize.value
   );
-  console.log(searchEmp.value.date);
+  console.log(searchEmp.value.name);
   if (response.code == 1) {
     // 解析数据
     empList.value = response.data.rows;
@@ -177,14 +177,12 @@ const handleCurrentChange = (val) => {
         align="center"
       />
       <el-table-column label="操作" align="center">
-        <template>
-          <el-button @click="editEmp" type="primary" size="small">
-            <el-icon><Edit /></el-icon>编辑
-          </el-button>
-          <el-button @click="delEmp" type="danger" size="small">
-            <el-icon><DeleteFilled /></el-icon>删除
-          </el-button>
-        </template>
+        <el-button type="primary" size="small" round>
+          <el-icon><Edit /></el-icon>编辑</el-button
+        >
+        <el-button type="danger" size="small" round>
+          <el-icon><Delete /></el-icon>删除</el-button
+        >
       </el-table-column>
     </el-table>
   </div>

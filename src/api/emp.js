@@ -6,3 +6,8 @@ export const queryPage = (name, gender, date, currentPage, pageSize) => {
     `/emps?name=${name}&gender=${gender}&date=${date}&currentPage=${currentPage}&pageSize=${pageSize}`
   );
 };
+
+// 新增员工
+export const addEmp = (data) => {
+  return request.post("/emps", data);
+};

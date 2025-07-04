@@ -2,7 +2,13 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { queryPage } from "@/api/emp";
-import { Minus, Plus, Edit, Delete } from "@element-plus/icons-vue";
+import {
+  Minus,
+  Plus,
+  Edit,
+  Delete,
+  UploadFilled,
+} from "@element-plus/icons-vue";
 
 // 表格数据展示
 const empList = ref([]);
@@ -11,7 +17,7 @@ const empList = ref([]);
 const currentPage = ref(1); // 当前页数(默认展示页数)
 const pageSize = ref(20); // 每页显示条数
 const total = ref(0); // 总条数
-const size = ref("default");
+const SizeForPagination = ref("default");
 const background = ref(false); // 背景色
 
 // 员工搜索条件
@@ -78,6 +84,107 @@ const handleCurrentChange = (val) => {
   console.log(`当前页${val}`);
   search();
 };
+
+// 添加员工的表单行为
+import { reactive } from "vue";
+import { ElForm, ElFormItem, ElInput, ElButton } from "element-plus";
+
+const ruleFormRef = ref(null);
+const ruleForm = reactive({
+  name: "Hello",
+  region: "",
+  count: "",
+  date1: "",
+  date2: "",
+  delivery: false,
+  location: "",
+  type: [],
+  resource: "",
+  desc: "",
+});
+
+const rules = reactive({
+  name: [
+    { required: true, message: "Please input Activity name", trigger: "blur" },
+    { min: 3, max: 5, message: "Length should be 3 to 5", trigger: "blur" },
+  ],
+  region: [
+    {
+      required: true,
+      message: "Please select Activity zone",
+      trigger: "change",
+    },
+  ],
+  count: [
+    {
+      required: true,
+      message: "Please select Activity count",
+      trigger: "change",
+    },
+  ],
+  date1: [
+    {
+      type: "date",
+      required: true,
+      message: "Please pick a date",
+      trigger: "change",
+    },
+  ],
+  date2: [
+    {
+      type: "date",
+      required: true,
+      message: "Please pick a time",
+      trigger: "change",
+    },
+  ],
+  location: [
+    {
+      required: true,
+      message: "Please select a location",
+      trigger: "change",
+    },
+  ],
+  type: [
+    {
+      type: "array",
+      required: true,
+      message: "Please select at least one activity type",
+      trigger: "change",
+    },
+  ],
+  resource: [
+    {
+      required: true,
+      message: "Please select activity resource",
+      trigger: "change",
+    },
+  ],
+  desc: [
+    { required: true, message: "Please input activity form", trigger: "blur" },
+  ],
+});
+
+const submitForm = async (formEl) => {
+  if (!formEl) return;
+  await formEl.validate((valid, fields) => {
+    if (valid) {
+      console.log("submit!");
+    } else {
+      console.log("error submit!", fields);
+    }
+  });
+};
+
+const resetForm = (formEl) => {
+  if (!formEl) return;
+  formEl.resetFields();
+};
+
+const options = Array.from({ length: 10000 }).map((_, idx) => ({
+  value: `${idx + 1}`,
+  label: `${idx + 1}`,
+}));
 </script>
 
 <template>
@@ -132,12 +239,7 @@ const handleCurrentChange = (val) => {
   <div class="table">
     <el-table :data="empList" border style="width: 100%">
       <el-table-column type="selection" width="55" align="center" />
-      <el-table-column
-        prop="username"
-        label="姓名"
-        width="120"
-        align="center"
-      />
+      <el-table-column prop="empName" label="姓名" width="120" align="center" />
       <el-table-column prop="gender" label="性别" width="120" align="center">
         <template #default="scope">{{
           scope.row.gender === 1 ? "男" : "女"
@@ -165,7 +267,7 @@ const handleCurrentChange = (val) => {
         align="center"
       />
       <el-table-column
-        prop="deptname"
+        prop="deptName"
         label="所属部门"
         width="120"
         align="center"
@@ -194,7 +296,7 @@ const handleCurrentChange = (val) => {
       v-model:current-page="currentPage"
       v-model:page-size="pageSize"
       :page-sizes="[5, 10, 20, 30, 40, 50, 100]"
-      :size="size"
+      :size="SizeForPagination"
       :background="background"
       layout="total, sizes, prev, pager, next, jumper"
       :total="total"
@@ -203,6 +305,91 @@ const handleCurrentChange = (val) => {
     />
     <!--size-change当每页展示数发生变化时触发-->
     <!--current-change页码发生变化时触发-->
+  </div>
+  <!--添加员工的表单-->
+  <div class="add-emp-form">
+    <el-form
+      ref="ruleFormRef"
+      style="max-width: 600px"
+      :model="ruleForm"
+      :rules="rules"
+      label-width="auto"
+    >
+      <el-form-item label="用户名" prop="userName">
+        <el-input v-model="ruleForm.name" />
+      </el-form-item>
+
+      <el-form-item label="姓名" prop="empName">
+        <el-select-v2
+          v-model="ruleForm.count"
+          placeholder="Activity count"
+          :options="options"
+        />
+      </el-form-item>
+
+      <el-form-item label="手机号" prop="phone">
+        <el-input v-model="ruleForm.phone" />
+      </el-form-item>
+
+      <el-form-item label="职位" prop="job">
+        <el-input v-model="ruleForm.job" />
+      </el-form-item>
+
+      <el-form-item label="薪资" prop="salary">
+        <el-input v-model="ruleForm.salary" />
+      </el-form-item>
+
+      <el-form-item label="所属部门" prop="deptName">
+        <el-input v-model="ruleForm.deptName" />
+      </el-form-item>
+
+      <el-form-item label="性别" prop="gender">
+        <el-select v-model="ruleForm.region" placeholder="您的性别">
+          <el-option label="男" value="1" />
+          <el-option label="女" value="2" />
+        </el-select>
+      </el-form-item>
+
+      <el-form-item label="入职日期" required>
+        <el-col :span="15">
+          <el-form-item prop="date">
+            <el-date-picker
+              v-model="ruleForm.date"
+              type="date"
+              aria-label="Pick a date"
+              placeholder="Pick a date"
+              style="width: 100%"
+              value-format="YYYY-MM-DD"
+            />
+          </el-form-item>
+        </el-col>
+
+        <el-form-item class="headIcon">
+          <el-upload
+            class="upload-demo"
+            drag
+            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+            multiple
+          >
+            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+            <div class="el-upload__text">
+              拖拽头像到此处或 <em>点击上传</em>
+            </div>
+            <template #tip>
+              <div class="el-upload__tip">
+                jpg/png 格式的图片,要求不多于500kb
+              </div>
+            </template>
+          </el-upload>
+        </el-form-item>
+      </el-form-item>
+      <el-form-item>
+        <el-button type="primary" @click="submitForm(ruleFormRef)">
+          Create
+        </el-button>
+        <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 
@@ -214,6 +401,12 @@ const handleCurrentChange = (val) => {
   margin-top: 30px;
 }
 .pagination {
+  margin-top: 30px;
+}
+.add-emp-form {
+  margin-top: 30px;
+}
+.headIcon {
   margin-top: 30px;
 }
 </style>

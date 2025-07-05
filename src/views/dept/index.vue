@@ -7,16 +7,21 @@ import { ElMessage, ElMessageBox } from "element-plus";
 
 //要展示的数据集
 const deptList = ref([]);
+
 //控制对话框显隐
 const dialogFormVisible = ref(false);
 const dialogFormVisible_edit = ref(false);
+
 //控制表单宽度
 const formLabelWidth = "140px";
+
 //控制表单的数据
 const dept = ref({ name: "" });
 const dept_id = ref("");
+
 //控制表单标题
 const formTitle = ref("");
+
 //控制表单校验规则
 // 范形是ts的语法可以直接删掉，reactive可以替换为ref(校验规则不要用ts的语法就可以正常运行了)
 const rules = ref({

@@ -8,6 +8,6 @@ export const queryPage = (name, gender, date, currentPage, pageSize) => {
 };
 
 // 新增员工
-export const addEmp = (data) => {
-  return request.post("/emps", data);
+export const addEmp = (emp) => {
+  return request.post("/emps", emp);
 };

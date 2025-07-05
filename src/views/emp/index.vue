@@ -62,7 +62,10 @@ const reset = () => {
 };
 
 // 新增员工
-const addEmp = () => {};
+const addEmp = () => {
+  // 显示对话框
+  addEmpDialogFormVisible.value = true;
+};
 
 // 删除员工
 const delEmp = () => {};
@@ -89,82 +92,82 @@ const handleCurrentChange = (val) => {
 import { reactive } from "vue";
 import { ElForm, ElFormItem, ElInput, ElButton } from "element-plus";
 
-const ruleFormRef = ref(null);
-const ruleForm = reactive({
-  name: "Hello",
-  region: "",
-  count: "",
-  date1: "",
-  date2: "",
-  delivery: false,
-  location: "",
-  type: [],
-  resource: "",
-  desc: "",
+// 控制添加员工的表单的显隐
+const addEmpDialogFormVisible = ref(false);
+
+// 创建员工的数据模型
+const emp = reactive({
+  userName: "",
+  empName: "",
+  phont: "",
+  job: "",
+  salary: "",
+  delivery: "",
+  deptName: "",
+  gender: "",
+  date: "",
 });
 
+// 定义校验规则
 const rules = reactive({
-  name: [
-    { required: true, message: "Please input Activity name", trigger: "blur" },
-    { min: 3, max: 5, message: "Length should be 3 to 5", trigger: "blur" },
+  userName: [
+    { required: true, message: "请输入用户名", trigger: "change" },
+    { min: 3, max: 10, message: "长度介于3到10之间", trigger: "change" },
   ],
-  region: [
+  empName: [
     {
       required: true,
-      message: "Please select Activity zone",
+      message: "请输入姓名",
       trigger: "change",
     },
   ],
-  count: [
+  phone: [
     {
       required: true,
-      message: "Please select Activity count",
+      message: "请输入手机号",
       trigger: "change",
     },
+    { min: 11, max: 11, message: "请输入合法的手机号", trigger: "change" },
   ],
-  date1: [
-    {
-      type: "date",
-      required: true,
-      message: "Please pick a date",
-      trigger: "change",
-    },
-  ],
-  date2: [
+  date: [
     {
       type: "date",
       required: true,
-      message: "Please pick a time",
+      message: "请选取时间",
       trigger: "change",
     },
   ],
-  location: [
+  job: [
     {
       required: true,
-      message: "Please select a location",
+      message: "请输入职位名称",
       trigger: "change",
     },
   ],
-  type: [
-    {
-      type: "array",
-      required: true,
-      message: "Please select at least one activity type",
-      trigger: "change",
-    },
-  ],
-  resource: [
+  salary: [
     {
       required: true,
-      message: "Please select activity resource",
+      message: "请输入薪资水平",
       trigger: "change",
     },
   ],
-  desc: [
-    { required: true, message: "Please input activity form", trigger: "blur" },
+  deptName: [
+    {
+      required: true,
+      message: "请输入部门名称",
+      trigger: "change",
+    },
+  ],
+  gender: [
+    {
+      required: true,
+      message: "请选取性别",
+      trigger: "change",
+    },
   ],
 });
 
+// 表单的提交事件
 const submitForm = async (formEl) => {
   if (!formEl) return;
   await formEl.validate((valid, fields) => {
@@ -176,11 +179,26 @@ const submitForm = async (formEl) => {
   });
 };
 
-const resetForm = (formEl) => {
-  if (!formEl) return;
-  formEl.resetFields();
+// 表单的重置事件
+const resetForm = (emp) => {
+  // 隐藏对话框
+  addEmpDialogFormVisible.value = false;
+  // 重置表单数据
+  if (!emp) return;
+  emp = reactive({
+    userName: "",
+    empName: "",
+    phont: "",
+    job: "",
+    salary: "",
+    delivery: "",
+    deptName: "",
+    gender: "",
+    date: "",
+  });
 };
 
+// 上传图片
 const options = Array.from({ length: 10000 }).map((_, idx) => ({
   value: `${idx + 1}`,
   label: `${idx + 1}`,
@@ -192,7 +210,7 @@ const options = Array.from({ length: 10000 }).map((_, idx) => ({
 
   <!--搜索栏-->
   <div class="search-bar">
-    <el-form :inline="true" :model="searchEmp" class="demo-form-inline">
+    <el-form :inline="true" :model="searchEmp" class="search-form">
       <el-form-item label="姓名">
         <el-input
           v-model="searchEmp.name"
@@ -308,94 +326,99 @@ const options = Array.from({ length: 10000 }).map((_, idx) => ({
   </div>
   <!--添加员工的表单-->
   <div class="add-emp-form">
-    <el-form
-      ref="ruleFormRef"
-      style="max-width: 600px"
-      :model="ruleForm"
-      :rules="rules"
-      label-width="auto"
-    >
-      <el-form-item label="用户名" prop="userName">
-        <el-input v-model="ruleForm.name" />
-      </el-form-item>
-
-      <el-form-item label="姓名" prop="empName">
-        <el-select-v2
-          v-model="ruleForm.count"
-          placeholder="Activity count"
-          :options="options"
-        />
-      </el-form-item>
-
-      <el-form-item label="手机号" prop="phone">
-        <el-input v-model="ruleForm.phone" />
-      </el-form-item>
-
-      <el-form-item label="职位" prop="job">
-        <el-input v-model="ruleForm.job" />
-      </el-form-item>
-
-      <el-form-item label="薪资" prop="salary">
-        <el-input v-model="ruleForm.salary" />
-      </el-form-item>
-
-      <el-form-item label="所属部门" prop="deptName">
-        <el-input v-model="ruleForm.deptName" />
-      </el-form-item>
-
-      <el-form-item label="性别" prop="gender">
-        <el-select v-model="ruleForm.region" placeholder="您的性别">
-          <el-option label="男" value="1" />
-          <el-option label="女" value="2" />
-        </el-select>
-      </el-form-item>
-
-      <el-form-item label="入职日期" required>
-        <el-col :span="15">
-          <el-form-item prop="date">
-            <el-date-picker
-              v-model="ruleForm.date"
-              type="date"
-              aria-label="Pick a date"
-              placeholder="Pick a date"
-              style="width: 100%"
-              value-format="YYYY-MM-DD"
-            />
-          </el-form-item>
-        </el-col>
-
-        <el-form-item class="headIcon">
-          <el-upload
-            class="upload-demo"
-            drag
-            action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
-            multiple
-          >
-            <el-icon class="el-icon--upload"><upload-filled /></el-icon>
-            <div class="el-upload__text">
-              拖拽头像到此处或 <em>点击上传</em>
-            </div>
-            <template #tip>
-              <div class="el-upload__tip">
-                jpg/png 格式的图片,要求不多于500kb
-              </div>
-            </template>
-          </el-upload>
+    <el-dialog v-model="addEmpDialogFormVisible" title="添加员工" width="500">
+      <el-form
+        ref="ruleFormRef"
+        style="max-width: 450px"
+        :model="emp"
+        :rules="rules"
+        label-width="auto"
+      >
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model="emp.userName" />
         </el-form-item>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="primary" @click="submitForm(ruleFormRef)">
-          Create
-        </el-button>
-        <el-button @click="resetForm(ruleFormRef)">Reset</el-button>
-      </el-form-item>
-    </el-form>
+
+        <el-form-item label="姓名" prop="empName">
+          <el-input v-model="emp.empName" />
+        </el-form-item>
+
+        <el-form-item label="性别" prop="gender">
+          <el-select v-model="emp.gender" style="width: 350px">
+            <el-option label="男" value="1" />
+            <el-option label="女" value="2" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="手机号" prop="phone">
+          <el-input v-model="emp.phone" />
+        </el-form-item>
+
+        <el-form-item label="职位" prop="job">
+          <el-select v-model="emp.job" style="width: 350px">
+            <el-option label="班主任" value="1" />
+            <el-option label="讲师" value="2" />
+            <el-option label="学工主管" value="3" />
+            <el-option label="教研主管" value="4" />
+            <el-option label="咨询师" value="5" />
+            <el-option label="其他" value="6" />
+          </el-select>
+        </el-form-item>
+
+        <el-form-item label="薪资" prop="salary">
+          <el-input v-model="emp.salary" />
+        </el-form-item>
+
+        <el-form-item label="所属部门" prop="deptName">
+          <el-select v-model="emp.deptName" style="width: 350px"> </el-select>
+        </el-form-item>
+
+        <el-form-item prop="date" label="入职日期" required>
+          <el-date-picker
+            v-model="emp.date"
+            type="date"
+            aria-label="Pick a date"
+            placeholder="Pick a date"
+            style="width: 350px"
+            value-format="YYYY-MM-DD"
+          />
+
+          <br />
+
+          <el-form-item class="headIcon">
+            <el-upload
+              class="upload-demo"
+              drag
+              action="https://run.mocky.io/v3/9d059bf9-4660-45f2-925d-ce80ad6c4d15"
+              multiple
+            >
+              <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+              <div class="el-upload__text">
+                拖拽头像到此处或 <em>点击上传</em>
+              </div>
+              <template #tip>
+                <div class="el-upload__tip">
+                  jpg/png 格式的图片,要求不多于500kb
+                </div>
+              </template>
+            </el-upload>
+          </el-form-item>
+        </el-form-item>
+      </el-form>
+      <template #footer>
+        <div class="dialog-footer">
+          <el-button @click="resetForm(emp)">取消</el-button>
+          <el-button type="primary" @click="addEmpDialogFormVisible = false">
+            确定
+          </el-button>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <style scoped>
-.demo-form-inline .el-input {
-  --el-input-width: 120px;
+.add-emp-form .el-input {
+  --el-input-width: 350px;
 }
 .table {
   margin-top: 30px;

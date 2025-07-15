@@ -12,6 +12,9 @@ import {
 
 // 表格数据展示
 const empList = ref([]);
+const dialogTitlle = ref();
+// 控制添加员工的表单的显隐
+const addEmpDialogFormVisible = ref(false);
 
 // 分页栏数据模型
 const currentPage = ref(1); // 当前页数(默认展示页数)
@@ -19,6 +22,19 @@ const pageSize = ref(20); // 每页显示条数
 const total = ref(0); // 总条数
 const SizeForPagination = ref("default");
 const background = ref(false); // 背景色
+// 创建员工的数据模型
+const emp = reactive({
+  userName: "",
+  empName: "",
+  phone: "",
+  job: "",
+  salary: "",
+  deptId: "",
+  image: "",
+  gender: "",
+  date: "",
+  empList: [],
+});
 
 // 员工搜索条件
 const searchEmp = ref({
@@ -65,6 +81,7 @@ const reset = () => {
 const addEmp = () => {
   // 显示对话框
   addEmpDialogFormVisible.value = true;
+  dialogTitlle.value = "新增员工";
 };
 
 // 删除员工
@@ -91,22 +108,6 @@ const handleCurrentChange = (val) => {
 // 添加员工的表单行为
 import { reactive } from "vue";
 import { ElForm, ElFormItem, ElInput, ElButton } from "element-plus";
-
-// 控制添加员工的表单的显隐
-const addEmpDialogFormVisible = ref(false);
-
-// 创建员工的数据模型
-const emp = reactive({
-  userName: "",
-  empName: "",
-  phont: "",
-  job: "",
-  salary: "",
-  delivery: "",
-  deptName: "",
-  gender: "",
-  date: "",
-});
 
 // 定义校验规则
 const rules = reactive({
@@ -324,9 +325,14 @@ const options = Array.from({ length: 10000 }).map((_, idx) => ({
     <!--size-change当每页展示数发生变化时触发-->
     <!--current-change页码发生变化时触发-->
   </div>
+
   <!--添加员工的表单-->
   <div class="add-emp-form">
-    <el-dialog v-model="addEmpDialogFormVisible" title="添加员工" width="500">
+    <el-dialog
+      v-model="addEmpDialogFormVisible"
+      :title="dialogTitle"
+      width="500"
+    >
       <el-form
         ref="ruleFormRef"
         style="max-width: 450px"
@@ -335,11 +341,14 @@ const options = Array.from({ length: 10000 }).map((_, idx) => ({
         label-width="auto"
       >
         <el-form-item label="用户名" prop="userName">
-          <el-input v-model="emp.userName" />
+          <el-input
+            v-model="emp.userName"
+            placeholder="请输入用户名,长度3-10位"
+          />
         </el-form-item>
 
         <el-form-item label="姓名" prop="empName">
-          <el-input v-model="emp.empName" />
+          <el-input v-model="emp.empName" placeholder="请输入姓名" />
         </el-form-item>
 
         <el-form-item label="性别" prop="gender">
@@ -350,7 +359,7 @@ const options = Array.from({ length: 10000 }).map((_, idx) => ({
         </el-form-item>
 
         <el-form-item label="手机号" prop="phone">
-          <el-input v-model="emp.phone" />
+          <el-input v-model="emp.phone" placeholder="请输入手机号" />
         </el-form-item>
 
         <el-form-item label="职位" prop="job">
@@ -365,7 +374,7 @@ const options = Array.from({ length: 10000 }).map((_, idx) => ({
         </el-form-item>
 
         <el-form-item label="薪资" prop="salary">
-          <el-input v-model="emp.salary" />
+          <el-input v-model="emp.salary" placeholder="请输入薪资水平" />
         </el-form-item>
 
         <el-form-item label="所属部门" prop="deptName">

@@ -19,6 +19,20 @@ import {
   UserFilled,
 } from "@element-plus/icons-vue";
 import router from "../../router";
+import { ElMessage } from "element-plus";
+
+// 退出
+const exit = () => {
+  // 清除用户信息
+  localStorage.removeItem("loginUser");
+  // 跳转到登录页面
+  router.push("/login");
+};
+
+// 修改密码
+const changePassword = () => {
+  ElMessage.error("功能暂未开放");
+};
 </script>
 <template>
   <div class="common-layout">
@@ -30,7 +44,7 @@ import router from "../../router";
           <a href="#">
             <el-icon><Edit /></el-icon> 修改密码 &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;
           </a>
-          <a href="#">
+          <a href="#" @click="exit">
             <el-icon><Switch /></el-icon> 退出登录
           </a>
         </span>
